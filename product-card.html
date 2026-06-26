@@ -6,6 +6,93 @@
     <title>product-card</title>
 </head>
 <body>
+    <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+  }
+
+  .background {
+    min-height: 100vh;
+    background-image: url('image/Logotipo de culturismo y gimnasio _ Vector Premium.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .card-body {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 16px;
+    padding: 24px;
+    width: 340px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+
+  .card-body h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  .card-body > p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
+  }
+
+  .card-body img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+
+  .card-body div p {
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .btn {
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 8px 4px 0;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn:first-of-type {
+    background: #e63946;
+    color: white;
+  }
+
+  .btn:first-of-type:hover {
+    background: #c1121f;
+  }
+
+  .btn:last-of-type {
+    background: transparent;
+    color: #e63946;
+    border: 2px solid #e63946;
+  }
+
+  .btn:last-of-type:hover {
+    background: #e63946;
+    color: white;
+  }
+</style>
+    <div class="background">
         <div class="card-body">
             <h2>Product Card OF Our Gym</h2>
             <p>This is a simple product card for our gym products.</p>
