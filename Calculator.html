@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #1a1a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .calculator {
+      background: #000;
+      border-radius: 40px;
+      padding: 20px;
+      width: 320px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    }
+
+    .display {
+      padding: 30px 15px 20px;
+      text-align: right;
+    }
+
+    .expression {
+      color: #666;
+      font-size: 20px;
+      min-height: 28px;
+      margin-bottom: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .result {
+      color: white;
+      font-size: 64px;
+      font-weight: 300;
+      letter-spacing: -2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 50%;
+      width: 68px;
+      height: 68px;
+      font-size: 22px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    button:active { opacity: 0.6; transform: scale(0.95); }
+
+    .btn-special { background: #a5a5a5; color: #000; font-weight: 600; }
+    .btn-operator { background: #ff9f0a; color: white; font-size: 28px; }
+    .btn-operator.active { background: white; color: #ff9f0a; }
+    .btn-number { background: #333; color: white; }
+    .btn-zero {
+      background: #333;
+      color: white;
+      border-radius: 34px;
+      width: 100%;
+      grid-column: span 2;
+      text-align: left;
+      padding-left: 26px;
+      font-size: 22px;
+    }
+    .btn-equal { background: #ff9f0a; color: white; font-size: 28px; }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <div class="display">
+      <div class="expression" id="expression"></div>
+      <div class="result" id="result">0</div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn-special" onclick="clearAll()">AC</button>
+      <button class="btn-special" onclick="toggleSign()">+/-</button>
+      <button class="btn-special" onclick="percentage()">%</button>
+      <button class="btn-operator" id="op-÷" onclick="pressOperator('÷')">÷</button>
+
+      <button class="btn-number" onclick="pressNumber('7')">7</button>
+      <button class="btn-number" onclick="pressNumber('8')">8</button>
+      <button class="btn-number" onclick="pressNumber('9')">9</button>
+      <button class="btn-operator" id="op-×" onclick="pressOperator('×')">×</button>
+
+      <button class="btn-number" onclick="pressNumber('4')">4</button>
+      <button class="btn-number" onclick="pressNumber('5')">5</button>~
+      <button class="btn-number" onclick="pressNumber('6')">6</button>
+      <button class="btn-operator" id="op-−" onclick="pressOperator('−')">−</button>
+
+      <button class="btn-number" onclick="pressNumber('1')">1</button>
+      <button class="btn-number" onclick="pressNumber('2')">2</button>
+      <button class="btn-number" onclick="pressNumber('3')">3</button>
+      <button class="btn-operator" id="op-+" onclick="pressOperator('+')">+</button>
+
+      <button class="btn-zero" onclick="pressNumber('0')">0</button>
+      <button class="btn-number" onclick="pressNumber('.')">.</button>
+      <button class="btn-equal" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let currentNumber = '0';
+    let previousNumber = '';
+    let operator = '';
+    let shouldResetDisplay = false;
+    let expressionText = '';
+
+    const display = document.getElementById('result');
+    const expression = document.getElementById('expression');
+
+    function updateDisplay(value) {
+      display.textContent = value;
+      // Auto shrink font for long numbers
+      if (value.toString().length > 9) {
+        display.style.fontSize = '32px';
+      } else if (value.toString().length > 6) {
+        display.style.fontSize = '48px';
+      } else {
+        display.style.fontSize = '64px';
+      }
+    }
+
+    function pressNumber(num) {
+      if (shouldResetDisplay) {
+        currentNumber = num;
+        shouldResetDisplay = false;
+      } else {
+        if (num === '.' && currentNumber.includes('.')) return;
+        if (currentNumber === '0' && num !== '.') {
+          currentNumber = num;
+        } else {
+          currentNumber += num;
+        }
+      }
+      updateDisplay(currentNumber);
+    }
+
+    function pressOperator(op) {
+      // Remove active from all operators
+      document.querySelectorAll('.btn-operator').forEach(b => b.classList.remove('active'));
+      document.getElementById('op-' + op).classList.add('active');
+
+      if (previousNumber !== '' && !shouldResetDisplay) {
+        calculate(true);
+      }
+
+      previousNumber = currentNumber;
+      operator = op;
+      expressionText = currentNumber + ' ' + op;
+      expression.textContent = expressionText;
+      shouldResetDisplay = true;
+    }
+
+    function calculate(chaining = false) {
+      if (previousNumber === '' || operator === '') return;
+
+      let num1 = parseFloat(previousNumber);
+      let num2 = parseFloat(currentNumber);
+      let result = 0;
+
+      if (operator === '+') result = num1 + num2;
+      if (operator === '−') result = num1 - num2;
+      if (operator === '×') result = num1 * num2;
+      if (operator === '÷') {
+        if (num2 === 0) { updateDisplay('Error'); return; }
+        result = num1 / num2;
+      }
+
+      // Round to avoid floating point issues
+      result = parseFloat(result.toFixed(10));
+
+      if (!chaining) {
+        expression.textContent = previousNumber + ' ' + operator + ' ' + currentNumber + ' =';
+        operator = '';
+        previousNumber = '';
+        document.querySelectorAll('.btn-operator').forEach(b => b.classList.remove('active'));
+      }
+
+      currentNumber = result.toString();
+      updateDisplay(result);
+      shouldResetDisplay = !chaining;
+    }
+
+    function clearAll() {
+      currentNumber = '0';
+      previousNumber = '';
+      operator = '';
+      expressionText = '';
+      expression.textContent = '';
+      updateDisplay('0');
+      document.querySelectorAll('.btn-operator').forEach(b => b.classList.remove('active'));
+    }
+
+    function toggleSign() {
+      currentNumber = (parseFloat(currentNumber) * -1).toString();
+      updateDisplay(currentNumber);
+    }
+
+    function percentage() {
+      currentNumber = (parseFloat(currentNumber) / 100).toString();
+      updateDisplay(currentNumber);
+    }
+  </script>
+
+</body>
+</html>
